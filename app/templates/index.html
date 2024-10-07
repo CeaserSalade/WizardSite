@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+  </head>
+
+  <body>
+    <section>
+      <h1>Wizard Site</h1>
+      <a class="i-btn" href="{{ url_for('main.register') }}">Create Account</a> <!-- This will redirect to the register page -->
+      <p>Already have an account?</p>
+      <a class="i-btn" href="{{ url_for('main.login') }}">Sign in</a> <!-- This will redirect to the login page -->
+    </section>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+  </head>
+
+  <body>
+    <section>
+      <h1>Timeline</h1>
+
+      <!-- Post submission form -->
+      <form action="{{ url_for('main.post') }}" method="POST">
+        <input type="text" name="username" placeholder="Your name" required />
+        <textarea name="content" placeholder="What's happening?" maxlength="280" required></textarea>
+        <button type="submit">Post</button>
+      </form>
+    </section>
+
+    <!-- Display posts -->
+    <section id="posts">
+      {% for post in posts %}
+      <div class="post">
+        <p><strong>{{ post.username }}</strong> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+        <p>{{ post.content }}</p>
+      </div>
+      <hr />
+      {% endfor %}
+    </section>
+  </body>
+</html>
