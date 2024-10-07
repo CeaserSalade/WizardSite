@@ -10,10 +10,10 @@
   </head>
 
   <body>
+    <!-- Post submission form -->
     <section>
       <h1>Timeline</h1>
 
-      <!-- Post submission form -->
       <form action="{{ url_for('main.post') }}" method="POST">
         <input type="text" name="username" placeholder="Your name" required />
         <textarea name="content" placeholder="What's happening?" maxlength="280" required></textarea>

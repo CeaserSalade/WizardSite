@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from .models import User, db
+from .models import User, Post, db  # Import necessary models
 
 main = Blueprint('main', __name__)
 
@@ -25,7 +25,6 @@ def register():
 
     return render_template('register.html')
 
-
 # Login Route
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,28 +36,15 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            return redirect(url_for('main.home'))  # Redirect to home after successful login
+            # Redirect to home after successful login
+            return redirect(url_for('main.home'))
         else:
-            return redirect(url_for('main.login'))  # Redirect back to login on failure
+            # Redirect back to login on failure
+            return redirect(url_for('main.login'))
 
     return render_template('login.html')
 
-
-# Dashboard Route (After login)
-@main.route('/home')
-def home():
-    return render_template('home.html')
-
-@main.route('/')
-def index():
-    return render_template('index.html')
-
-from flask import Blueprint, render_template, redirect, url_for, request
-from .models import Post, db
-
-main = Blueprint('main', __name__)
-
-# Timeline route
+# Home route displaying the timeline
 @main.route('/home')
 def home():
     posts = Post.query.order_by(Post.timestamp.desc()).all()  # Show newest posts first
@@ -76,3 +62,13 @@ def post():
     db.session.commit()
 
     return redirect(url_for('main.home'))
+
+# # Dashboard Route (After login)
+# @main.route('/home')
+# def home():
+#     return render_template('home.html')
+
+# Index Route (Main landing page)
+@main.route('/')
+def index():
+    return render_template('index.html')
