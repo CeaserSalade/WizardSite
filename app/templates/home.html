@@ -7,29 +7,83 @@
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+
+    <!-- Boxicons Link -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
   </head>
 
   <body>
-    <!-- Post submission form -->
     <section>
-      <h1>Timeline</h1>
+      <div class="container">
+        <!-- Main content: timeline and post submission -->
+        <div class="main-content">
+          <h1>Timeline</h1>
+          <!-- Search form -->
+          <form action="{{ url_for('main.home') }}" method="GET">
+            <input type="text" name="query" placeholder="Search posts..." value="{{ search_query }}" />
+            <button type="submit" class="i-btn">Search</button>
+          </form>
 
-      <form action="{{ url_for('main.post') }}" method="POST">
-        <input type="text" name="username" placeholder="Your name" required />
-        <textarea name="content" placeholder="What's happening?" maxlength="280" required></textarea>
-        <button type="submit">Post</button>
-      </form>
-    </section>
+          <!-- Post submission form -->
+          <form action="{{ url_for('main.post') }}" method="POST">
+            <input type="text" name="username" placeholder="Your name" required />
+            <textarea name="content" placeholder="What's happening?" maxlength="280" required></textarea>
+            <button type="submit" class="i-btn">Post</button>
+          </form>
 
-    <!-- Display posts -->
-    <section id="posts">
-      {% for post in posts %}
-      <div class="post">
-        <p><strong>{{ post.username }}</strong> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-        <p>{{ post.content }}</p>
+          <!-- Display posts -->
+          <section id="posts">
+            {% for post in posts %}
+            <div class="post">
+              <p><strong>{{ post.username }}</strong> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+              <p>{{ post.content }}</p>
+
+              <!-- Like button -->
+              <form action="{{ url_for('main.like_post', post_id=post.id) }}" method="POST" style="display: inline">
+                <button type="submit"><box-icon type='solid' name='heart'></box-icon></button>
+                <span>{{ post.like_count }} Likes</span>
+              </form>
+
+              <!-- Display comments -->
+              <div class="comments">
+                <h4>Comments</h4>
+                <ul>
+                  {% for comment in post.comments %}
+                  <li>
+                    <strong>{{ comment.username }}:</strong> {{ comment.content }}
+                    <small>({{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})</small>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Comment form -->
+              <form action="{{ url_for('main.add_comment', post_id=post.id) }}" method="POST">
+                <input type="text" name="username" placeholder="Your name" required />
+                <textarea name="content" placeholder="Add a comment..." maxlength="280" required></textarea>
+                <button type="submit"><box-icon name='comment'></box-icon></button>
+              </form>
+
+              <!-- Delete button -->
+              <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="POST" style="display: inline">
+                <button type="submit">Delete</button>
+              </form>
+            </div>
+            <hr />
+            {% endfor %}
+          </section>
+        </div>
+
+        <!-- Sidebar: Trending Topics -->
+        <div class="sidebar">
+          <h2>Trending Topics</h2>
+          <ul>
+            {% for topic in trending_topics %}
+            <li>#{{ topic }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-      <hr />
-      {% endfor %}
     </section>
   </body>
 </html>

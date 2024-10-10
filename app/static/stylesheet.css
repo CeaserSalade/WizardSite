@@ -79,6 +79,50 @@ textarea {
   box-sizing: border-box;
 }
 
+/* Container for main content and sidebar */
+.container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Main content area */
+.main-content {
+  width: 70%;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 25%;
+  padding-left: 20px;
+  border-left: 1px solid #ddd;
+}
+
+.sidebar h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+}
+
+/* Post styling */
+.post {
+  margin-bottom: 20px;
+}
+
+.post p {
+  margin: 5px 0;
+}
+
 hr {
   border: 1px solid #ddd;
 }

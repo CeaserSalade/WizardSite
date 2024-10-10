@@ -1,10 +1,10 @@
-
 from . import db
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 bcrypt = Bcrypt()
 
-# Password
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -17,15 +17,26 @@ class User(db.Model):
         return bcrypt.check_password_hash(self.password_hash, password)
 
 
-# Post
-from . import db
-from datetime import datetime
-
+# Post model
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    content = db.Column(db.String(280), nullable=False)  # Max length like Twitter's
+    content = db.Column(db.String(280), nullable=False)  # Max length similar to Twitter's
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    like_count = db.Column(db.Integer, default=0)
+
+    # Relationship with Comment
+    comments = db.relationship('Comment', backref='post', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Post {self.id} by {self.username}>'
+
+
+# Comment model
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
+    content = db.Column(db.String(280), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    like_count = db.Column(db.Integer, default=0)
