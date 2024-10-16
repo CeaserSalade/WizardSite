@@ -10,6 +10,16 @@
 
     <!-- Boxicons Link -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Remix Icons Link -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <!-- Google Fonts Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet" />
   </head>
 
   <body>
@@ -18,6 +28,7 @@
         <!-- Main content: timeline and post submission -->
         <div class="main-content">
           <h1>Timeline</h1>
+
           <!-- Search form -->
           <form action="{{ url_for('main.home') }}" method="GET">
             <input type="text" name="query" placeholder="Search posts..." value="{{ search_query }}" />
@@ -35,17 +46,33 @@
           <section id="posts">
             {% for post in posts %}
             <div class="post">
+              <!-- Options dropdown at top-right -->
+              <div class="dropdown">
+                <i class="ri-more-line" onclick="toggleOptionsDropdown('{{ post.id }}')"></i>
+                <div id="options-dropdown-{{ post.id }}" class="dropdown-content">
+                  <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="POST">
+                    <button type="submit">Delete</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Post content -->
               <p><strong>{{ post.username }}</strong> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
               <p>{{ post.content }}</p>
 
               <!-- Like button -->
               <form action="{{ url_for('main.like_post', post_id=post.id) }}" method="POST" style="display: inline">
-                <button type="submit"><box-icon type='solid' name='heart'></box-icon></button>
+                <button type="submit"><i class="ri-heart-line"></i></button>
                 <span>{{ post.like_count }} Likes</span>
               </form>
 
-              <!-- Display comments -->
-              <div class="comments">
+              <!-- Show/Hide Comments button -->
+              <button id="toggle-btn-{{ post.id }}" onclick="toggleComments('{{ post.id }}')">
+                <i class="ri-chat-1-line" id="comment-icon-{{ post.id }}"></i>
+              </button>
+
+              <!-- Comments section (initially hidden) -->
+              <div id="comments-{{ post.id }}" class="comments" style="display: none">
                 <h4>Comments</h4>
                 <ul>
                   {% for comment in post.comments %}
@@ -55,21 +82,15 @@
                   </li>
                   {% endfor %}
                 </ul>
+
+                <!-- Comment form -->
+                <form action="{{ url_for('main.add_comment', post_id=post.id) }}" method="POST">
+                  <input type="text" name="username" placeholder="Your name" required />
+                  <textarea name="content" placeholder="Add a comment..." maxlength="280" required></textarea>
+                  <button type="submit">Reply</button>
+                </form>
               </div>
-
-              <!-- Comment form -->
-              <form action="{{ url_for('main.add_comment', post_id=post.id) }}" method="POST">
-                <input type="text" name="username" placeholder="Your name" required />
-                <textarea name="content" placeholder="Add a comment..." maxlength="280" required></textarea>
-                <button type="submit"><box-icon name='comment'></box-icon></button>
-              </form>
-
-              <!-- Delete button -->
-              <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="POST" style="display: inline">
-                <button type="submit">Delete</button>
-              </form>
             </div>
-            <hr />
             {% endfor %}
           </section>
         </div>
@@ -85,5 +106,7 @@
         </div>
       </div>
     </section>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
   </body>
 </html>

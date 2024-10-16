@@ -116,13 +116,52 @@ textarea {
 
 /* Post styling */
 .post {
-  margin-bottom: 20px;
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .post p {
   margin: 5px 0;
 }
 
-hr {
+.post i {
+  font-size: 18px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.post button {
+  background-color: transparent;
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Options dropdown styling */
+.dropdown {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 0;
+  background-color: var(--text-color);
   border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+  z-index: 1;
+}
+
+.dropdown-content button {
+  border: none;
+  background: none;
+  color: red;
 }
