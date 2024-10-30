@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from .models import User, Post, Comment, db
 from collections import Counter
+from datetime import datetime, timedelta
+from flask_login import login_user, login_required, current_user
+
+from flask_login import login_user
 
 main = Blueprint('main', __name__)
 
@@ -37,8 +41,8 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and user.check_password(password):
-            # Redirect to home after successful login
-            return redirect(url_for('main.home'))
+            login_user(user)  # Log the user in
+            return redirect(url_for('main.view_account'))
         else:
             # Redirect back to login on failure
             return redirect(url_for('main.login'))
@@ -49,8 +53,11 @@ def login():
 def get_trending_topics(posts, num_trends=5):
     words = []
     for post in posts:
-        words.extend(post.content.lower().split())  # Collect all words from each post
-    common_words = Counter(words).most_common(num_trends)  # Get the most common words
+        # Split the content into words and add to the list
+        words.extend(post.content.lower().split())
+    # Get the most common words from all posts
+    common_words = Counter(words).most_common(num_trends)
+    # Extract just the words for trending topics
     trending_topics = [word for word, _ in common_words]
     return trending_topics
 
@@ -66,6 +73,7 @@ def home():
     else:
         posts = Post.query.order_by(Post.timestamp.desc()).all()
     
+    # Calculate trending topics from the posts
     trending_topics = get_trending_topics(posts)
     
     return render_template('home.html', posts=posts, search_query=search_query, trending_topics=trending_topics)
@@ -103,6 +111,15 @@ def add_comment(post_id):
     db.session.add(new_comment)
     db.session.commit()
     return redirect(url_for('main.home'))
+
+# View Account Route
+@main.route('/account')
+@login_required  # Ensure only logged-in users can access this route
+def view_account():
+    user = current_user  # Get the currently logged-in user
+    user_posts = Post.query.filter_by(username=user.username).all()  # Fetch user's posts
+
+    return render_template('account.html', user=user, posts=user_posts)
 
 # Delete post route
 @main.route('/delete_post/<int:post_id>', methods=['POST'])
