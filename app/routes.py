@@ -4,8 +4,6 @@ from collections import Counter
 from datetime import datetime, timedelta
 from flask_login import login_user, login_required, current_user
 
-from flask_login import login_user
-
 main = Blueprint('main', __name__)
 
 # Registration Route
@@ -42,7 +40,7 @@ def login():
 
         if user and user.check_password(password):
             login_user(user)  # Log the user in
-            return redirect(url_for('main.view_account'))
+            return redirect(url_for('main.home'))
         else:
             # Redirect back to login on failure
             return redirect(url_for('main.login'))
@@ -80,12 +78,12 @@ def home():
 
 # New post submission route
 @main.route('/post', methods=['POST'])
+@login_required  # Ensure only logged-in users can post
 def post():
-    username = request.form['username']
     content = request.form['content']
 
-    # Create a new post
-    new_post = Post(username=username, content=content)
+    # Create a new post using the logged-in user's username
+    new_post = Post(username=current_user.username, content=content)
     db.session.add(new_post)
     db.session.commit()
 
@@ -101,13 +99,13 @@ def like_post(post_id):
 
 # Route to add a comment
 @main.route('/add_comment/<int:post_id>', methods=['POST'])
+@login_required  # Ensure only logged-in users can comment
 def add_comment(post_id):
     post = Post.query.get_or_404(post_id)
-    username = request.form['username']
     content = request.form['content']
 
-    # Add new comment
-    new_comment = Comment(post_id=post_id, username=username, content=content)
+    # Add new comment using the logged-in user's username
+    new_comment = Comment(post_id=post_id, username=current_user.username, content=content)
     db.session.add(new_comment)
     db.session.commit()
     return redirect(url_for('main.home'))

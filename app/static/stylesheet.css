@@ -34,7 +34,6 @@ section {
 }
 
 /* Index */
-
 .i-btn {
   display: inline-block;
   cursor: pointer;
@@ -53,66 +52,85 @@ section {
   transform: scale(1.1);
 }
 
-/* Home */
-
-form {
-  margin-bottom: 20px;
-}
-
-input,
-textarea {
-  width: 100%;
-  margin: 10px 0;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-form {
-  margin-bottom: 20px;
-}
-
-input,
-textarea {
-  width: 100%;
-  margin: 10px 0;
-  padding: 8px;
-  box-sizing: border-box;
-}
 
 /* Container for main content and sidebar */
 .container {
   display: flex;
   justify-content: space-between;
-  max-width: 1200px;
-  margin: auto;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
-/* Main content area */
+/* Main content container */
 .main-content {
-  width: 70%;
+  display: flex;
+  width: 100%;
 }
 
-/* Sidebar styling */
-.sidebar {
-  width: 25%;
+/* My Account */
+
+.navbar{
+  width: 15%;
+  padding-right: 20px;
+  border-right: 1px solid #ddd;
+}
+
+/* Timeline content */
+.timeline-content {
+  width: 75%;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+/* Trending Topics */
+.trending-topics {
+  width: 15%;
   padding-left: 20px;
   border-left: 1px solid #ddd;
 }
 
-.sidebar h2 {
+.trending-topics h2 {
   font-size: 1.5em;
   margin-bottom: 10px;
+  color: var(--text-color);
 }
 
-.sidebar ul {
+.trending-topics ul {
   list-style-type: none;
-  padding: 0;
 }
 
-.sidebar ul li {
+.trending-topics ul li {
   font-size: 1.1em;
+  color: var(--second-color);
   margin-bottom: 8px;
 }
+
+/* Home */
+form {
+  margin-bottom: 20px;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+
 
 /* Post styling */
 .post {
