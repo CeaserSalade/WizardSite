@@ -75,6 +75,11 @@ section {
   border-right: 1px solid #ddd;
 }
 
+.account-link{
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
 /* Timeline content */
 .timeline-content {
   width: 75%;

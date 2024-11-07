@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_user, login_required, current_user
 from .models import User, Post, Comment, db
 from collections import Counter
 from datetime import datetime, timedelta
-from flask_login import login_user, login_required, current_user
 
 main = Blueprint('main', __name__)
 
@@ -126,6 +126,37 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return redirect(url_for('main.home'))
+
+@main.route('/profile/<string:username>')
+def view_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    user_posts = Post.query.filter_by(username=user.username).order_by(Post.timestamp.desc()).all()  # Fetch the user's posts
+
+    return render_template('profile.html', user=user, posts=user_posts)
+
+@main.route('/follow/<int:user_id>')
+@login_required
+def follow(user_id):
+    user = User.query.get_or_404(user_id)
+    if user == current_user:
+        flash("You cannot follow yourself!", "warning")
+        return redirect(url_for('main.view_account', user_id=user_id))
+    current_user.follow(user)
+    db.session.commit()
+    flash(f"You are now following {user.username}", "success")
+    return redirect(url_for('main.view_account', user_id=user_id))
+
+@main.route('/unfollow/<int:user_id>')
+@login_required
+def unfollow(user_id):
+    user = User.query.get_or_404(user_id)
+    if user == current_user:
+        flash("You cannot unfollow yourself!", "warning")
+        return redirect(url_for('main.view_account', user_id=user_id))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash(f"You have unfollowed {user.username}", "info")
+    return redirect(url_for('main.view_account', user_id=user_id))
 
 # Index Route (Main landing page)
 @main.route('/')

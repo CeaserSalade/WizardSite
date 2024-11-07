@@ -22,32 +22,24 @@
 
   <body>
     <section class="account-details">
-      <h1>Welcome, {{ user.username }}!</h1>
-
-      <h2>Your Account Details</h2>
-      <ul>
-        <li><strong>Username:</strong> {{ user.username }}</li>
-        <li><p>{{ user.followers.count() }} followers</p></li>
-        <li><p>{{ user.followed.count() }} following</p></li>
-        <li><strong>Posts:</strong> {{ posts|length }}</li>
-      </ul>
-
-      <h3>Your Posts</h3>
-      <ul>
-        {% for post in posts %}
-        <li>
-          <p><strong>{{ post.content }}</strong></p>
-          <small>Posted on {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
-        </li>
-        {% endfor %}
-      </ul>
-
-      {% if user != current_user %} {% if current_user.is_following(user) %}
-      <h1>{{ user.username }}'s Account</h1>
-      <a href="{{ url_for('main.unfollow', user_id=user.id) }}" class="btn btn-danger">Unfollow</a>
-      {% else %}
-      <a href="{{ url_for('main.follow', user_id=user.id) }}" class="btn btn-primary">Follow</a>
-      {% endif %} {% endif %}
+        <h1>{{ user.username }}'s Profile</h1>
+        <p>Followers: {{ user.followers.count() }}</p>
+        <p>Following: {{ user.followed.count() }}</p>
+    
+        {% if user != current_user %}
+            {% if current_user.is_following(user) %}
+                <a href="{{ url_for('main.unfollow', user_id=user.id) }}" class="btn">Unfollow</a>
+            {% else %}
+                <a href="{{ url_for('main.follow', user_id=user.id) }}" class="btn">Follow</a>
+            {% endif %}
+        {% endif %}
+    
+        <h2>Posts by {{ user.username }}</h2>
+        <ul>
+            {% for post in posts %}
+                <li>{{ post.content }} - {{ post.timestamp }}</li>
+            {% endfor %}
+        </ul>
 
       <a href="{{ url_for('main.home') }}">Back to Timeline</a>
     </section>
