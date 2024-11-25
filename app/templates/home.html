@@ -28,6 +28,8 @@
 
           <!-- Navbar for My Account -->
         <div class="navbar">
+          <a href="{{ url_for('main.home') }}" >Home</a>
+          <a href="#" >Messages</a>
           <a href="{{ url_for('main.view_account') }}" class="account-link">My Account</a>
         </div>
 
@@ -61,7 +63,7 @@
                 </div>
         
                 <!-- Post content -->
-                <p><strong><a href="{{ url_for('main.view_profile', username=post.username) }}">{{ post.username }}</a></strong> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                <p><a href="{{ url_for('main.view_profile', username=post.username) }}" class="post-user">{{ post.username }}</a> - <small>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
               <p>{{ post.content }}</p>
         
                 <!-- Like button -->
