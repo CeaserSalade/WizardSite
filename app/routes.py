@@ -116,8 +116,15 @@ def add_comment(post_id):
 def view_account():
     user = current_user  # Get the currently logged-in user
     user_posts = Post.query.filter_by(username=user.username).all()  # Fetch user's posts
-
     return render_template('account.html', user=user, posts=user_posts)
+
+# View Replies Route
+@main.route('/account/replies')
+@login_required
+def view_replies():
+    user = current_user
+    user_replies = Comment.query.filter_by(username=user.username).order_by(Comment.timestamp.desc()).all()
+    return render_template('replies.html', user=user, replies=user_replies)
 
 # Delete post route
 @main.route('/delete_post/<int:post_id>', methods=['POST'])

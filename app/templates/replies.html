@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real Talk</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+
+    <!-- Boxicons Link -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Remix Icons Link -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <!-- Google Fonts Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  </head>
+
+<body>
+    <section>
+        <h1>{{ user.username }}'s Replies</h1>
+        <ul>
+            {% for reply in replies %}
+            <li>
+                <p><strong>Replied to Post ID: {{ reply.post_id }}</strong></p>
+                <p>{{ reply.content }}</p>
+                <small>{{ reply.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('main.view_account') }}" class="back-link">Back to Account</a>
+    </section>
+</body>
+</html>
