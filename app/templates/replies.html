@@ -20,19 +20,85 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   </head>
 
-<body>
+  <body>
     <section>
-        <h1>{{ user.username }}'s Replies</h1>
-        <ul>
-            {% for reply in replies %}
-            <li>
-                <p><strong>Replied to Post ID: {{ reply.post_id }}</strong></p>
-                <p>{{ reply.content }}</p>
-                <small>{{ reply.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
-            </li>
-            {% endfor %}
-        </ul>
-        <a href="{{ url_for('main.view_account') }}" class="back-link">Back to Account</a>
+      <div class="container">
+        <div class="main-content">
+          <!-- Navbar -->
+          <div class="navbar">
+            <a href="{{ url_for('main.home') }}">Home</a>
+            <a href="#">Messages</a>
+            <a href="{{ url_for('main.view_account') }}" class="account-link">My Account</a>
+          </div>
+
+          <!-- Account Details and Tabs -->
+          <div class="account-details">
+            <h1>Welcome, {{ user.username }}!</h1>
+
+            <h2>Your Account Details</h2>
+            <ul>
+              <li>Username: {{ user.username }}</li>
+              <li><p>{{ user.followers.count() }} followers</p></li>
+              <li><p>{{ user.followed.count() }} following</p></li>
+              <li>Posts: {{ posts|length }}</li>
+            </ul>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs">
+              <a href="{{ url_for('main.view_account') }}" class="tab-link {% if active_tab == 'posts' %}active{% endif %}">Posts</a>
+              <a href="{{ url_for('main.view_replies') }}" class="tab-link {% if active_tab == 'replies' %}active{% endif %}">Replies</a>
+            </div>
+
+            <!-- Replies Section -->
+            <section id="replies">
+                {% for reply in replies %}
+                <div class="post">
+                  <!-- Dropdown menu for reply actions -->
+                  <div class="dropdown">
+                    <i class="ri-more-line" onclick="toggleOptionsDropdown('{{ reply.id }}')"></i>
+                    <div id="options-dropdown-{{ reply.id }}" class="dropdown-content">
+                      <!-- Delete Reply -->
+                      <form action="{{ url_for('main.delete_comment', comment_id=reply.id) }}" method="POST">
+                        <button type="submit" class="delete-btn">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+              
+                  <!-- Reply Content -->
+                  <p>
+                    <a href="{{ url_for('main.view_profile', username=reply.username) }}" class="post-user">{{ reply.username }}</a>
+                    - <small>{{ reply.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                  </p>
+                  <p>{{ reply.content }}</p>
+              
+                  <!-- Actions: Like and Delete -->
+                  <div class="post-actions">
+                    <form action="{{ url_for('main.like_comment', comment_id=reply.id) }}" method="POST">
+                      <button type="submit">
+                        <i class="ri-heart-line"></i>
+                      </button>
+                      <span>{{ reply.like_count }} {{ 'Like' if reply.like_count == 1 else 'Likes' }}</span>
+                    </form>
+                  </div>
+                </div>
+                {% endfor %}
+              </section>
+              
+          </div>
+
+          <!-- Trending Topics section -->
+          <div class="trending-topics">
+            <h2>Trending Topics</h2>
+            <ul>
+              {% for topic in trending_topics %}
+              <li>#{{ topic }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
-</body>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
 </html>

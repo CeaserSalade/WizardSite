@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify ,request
 from flask_login import login_user, login_required, current_user
 from .models import User, Post, Comment, db
 from collections import Counter
@@ -91,11 +91,57 @@ def post():
 
 # Route to like a post
 @main.route('/like_post/<int:post_id>', methods=['POST'])
+@login_required
 def like_post(post_id):
     post = Post.query.get_or_404(post_id)
-    post.like_count += 1  # Increment like count
+    post.like_count += 1
     db.session.commit()
-    return redirect(url_for('main.home'))
+    return jsonify({"success": True, "like_count": post.like_count})
+
+# Route to edit a post
+@main.route('/edit_post/<int:post_id>', methods=['POST'])
+@login_required
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    if post.username != current_user.username:
+        return jsonify({"success": False, "message": "Unauthorized"})
+
+    new_content = request.json.get("content")
+    if new_content:
+        post.content = new_content
+        db.session.commit()
+        return jsonify({"success": True, "new_content": post.content})
+
+    return jsonify({"success": False, "message": "Content cannot be empty"})
+
+
+# Route to like a comment
+@main.route('/like_comment/<int:comment_id>', methods=['POST'])
+@login_required  # Ensure only logged-in users can like comments
+def like_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.like_count += 1  # Increment like count
+    db.session.commit()
+    return redirect(url_for('main.view_replies'))
+
+# Route to edit a comment
+@main.route('/edit_comment/<int:comment_id>', methods=['POST'])
+@login_required
+def edit_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+
+    if comment.username != current_user.username:
+        return jsonify({"success": False, "message": "Unauthorized"})
+
+    new_content = request.json.get("content")
+    if new_content:
+        comment.content = new_content
+        db.session.commit()
+        return jsonify({"success": True, "new_content": comment.content})
+
+    return jsonify({"success": False, "message": "Content cannot be empty"})
+
 
 # Route to add a comment
 @main.route('/add_comment/<int:post_id>', methods=['POST'])
@@ -133,6 +179,23 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return redirect(url_for('main.home'))
+
+# Route to delete a comment
+@main.route('/delete_comment/<int:comment_id>', methods=['POST'])
+@login_required  # Ensure only logged-in users can delete comments
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    
+    # Ensure the user can only delete their own comments
+    if comment.username != current_user.username:
+        flash("You can only delete your own comments.", "warning")
+        return redirect(url_for('main.view_replies'))
+    
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify({"success": True})
+
+
 
 @main.route('/profile/<string:username>')
 def view_profile(username):
