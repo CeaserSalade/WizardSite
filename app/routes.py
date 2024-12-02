@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify ,request
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, session, request
 from flask_login import login_user, login_required, current_user
-from .models import User, Post, Comment, db
+from .models import User, Post, Comment, Message, db
 from collections import Counter
 from datetime import datetime, timedelta
 
@@ -227,6 +227,30 @@ def unfollow(user_id):
     db.session.commit()
     flash(f"You have unfollowed {user.username}", "info")
     return redirect(url_for('main.view_account', user_id=user_id))
+
+@main.route('/messages', methods=['GET'])
+@login_required
+def inbox():
+    messages = Message.query.filter_by(recipient_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    return render_template('inbox.html', messages=messages)
+
+@main.route('/messages/send', methods=['POST'])
+@login_required
+def send_message():
+    recipient_username = request.form.get('recipient')
+    content = request.form.get('content')
+
+    recipient = User.query.filter_by(username=recipient_username).first()
+    if not recipient:
+        flash('Recipient not found!', 'danger')
+        return redirect(url_for('main.inbox'))  # Updated to include the blueprint name
+
+    message = Message(sender_id=current_user.id, recipient_id=recipient.id, content=content)
+    db.session.add(message)
+    db.session.commit()
+
+    flash('Message sent successfully!', 'success')
+    return redirect(url_for('main.inbox'))  # Updated to include the blueprint name
 
 # Index Route (Main landing page)
 @main.route('/')

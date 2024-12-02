@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+
+    <!-- Boxicons Link -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Remix Icons Link -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <!-- Google Fonts Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <section>
+      <div class="container">
+        <div class="main-content">
+
+          <!-- Navbar -->
+        <div class="navbar">
+          <a href="{{ url_for('main.home') }}" >Home</a>
+          <a href="{{ url_for('main.inbox') }}">Messages</a>
+          <a href="{{ url_for('main.view_account') }}" class="account-link">My Account</a>
+        </div>
+
+          <div class="timeline-content">
+            <h1>Inbox</h1>      
+            
+            <!-- Display posts -->
+            <section id="posts">
+              <ul>
+                {% for message in messages %}
+                <li>
+                    {{ message.sender.username }}: {{ message.content }} ({{ message.timestamp }})
+                </li>
+                {% endfor %}
+              </ul>
+
+              <h2>Send a Message</h2>
+              <form method="POST" action="{{ url_for('main.send_message') }}">
+                <input type="text" name="recipient" placeholder="Recipient Username" required>
+                  <textarea name="content" placeholder="Write your message..." required></textarea>
+                  <button type="submit">Send</button>
+              </form>                
+            </section>
+          </div>
+        
+          <!-- Trending Topics section -->
+          <div class="trending-topics">
+            <h2>Trending Topics</h2>
+            <ul>
+              {% for topic in trending_topics %}
+              <li>#{{ topic }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>
